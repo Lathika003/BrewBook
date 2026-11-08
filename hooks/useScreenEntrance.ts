@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { cancelAnimation, Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { cancelAnimation, Easing, Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useAppReducedMotion } from './useAppReducedMotion';
 
 type ScreenEntranceVariant = 'page' | 'recipe';
@@ -15,8 +15,8 @@ export function useScreenEntrance(variant: ScreenEntranceVariant = 'page') {
     } else {
       progress.set(0);
       progress.set(withTiming(1, {
-        duration: variant === 'recipe' ? 680 : 520,
-        easing: Easing.bezier(0.16, 1, 0.3, 1),
+        duration: variant === 'recipe' ? 400 : 300,
+        easing: Easing.bezier(0.22, 1, 0.36, 1),
       }));
     }
     return () => {
@@ -27,20 +27,16 @@ export function useScreenEntrance(variant: ScreenEntranceVariant = 'page') {
 
   return useAnimatedStyle(() => {
     if (reducedMotion) {
-      return { opacity: 1, transform: [{ perspective: 1200 }, { translateX: 0 }, { translateY: 0 }, { rotateY: '0deg' }, { rotateX: '0deg' }, { scale: 1 }] };
+      return { opacity: 1, transform: [{ translateY: 0 }, { scale: 1 }] };
     }
 
     const recipe = variant === 'recipe';
     const value = progress.value;
     return {
-      opacity: interpolate(value, [0, 0.24, 1], [0, 1, 1]),
+      opacity: interpolate(value, [0, 1], [recipe ? 0.18 : 0.35, 1], Extrapolation.CLAMP),
       transform: [
-        { perspective: recipe ? 900 : 1200 },
-        { translateX: interpolate(value, [0, 1], [recipe ? 54 : 24, 0]) },
-        { translateY: interpolate(value, [0, 1], [recipe ? 22 : 12, 0]) },
-        { rotateY: `${interpolate(value, [0, 1], [recipe ? 9 : 4.5, 0])}deg` },
-        { rotateX: `${interpolate(value, [0, 1], [recipe ? -2.5 : -1.2, 0])}deg` },
-        { scale: interpolate(value, [0, 1], [recipe ? 0.9 : 0.97, 1]) },
+        { translateY: interpolate(value, [0, 1], [recipe ? 5 : 3, 0]) },
+        { scale: interpolate(value, [0, 1], [recipe ? 0.985 : 0.995, 1]) },
       ],
     };
   });
