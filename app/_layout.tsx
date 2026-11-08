@@ -6,5 +6,5 @@ import { AppProvider } from '@/context/AppContext';
 import { colors } from '@/constants/theme';
 
 export default function RootLayout() {
-  return <GestureHandlerRootView style={{ flex:1 }}><SafeAreaProvider><AppProvider><StatusBar style="dark"/><Stack screenOptions={{ headerShown:false, contentStyle:{backgroundColor:colors.cream}, animation:'fade_from_bottom' }}><Stack.Screen name="(tabs)"/><Stack.Screen name="recipe/[id]" options={{animation:'slide_from_right'}}/><Stack.Screen name="search" options={{animation:'slide_from_right'}}/><Stack.Screen name="brew-guide" options={{animation:'slide_from_right'}}/><Stack.Screen name="settings" options={{animation:'slide_from_right'}}/></Stack></AppProvider></SafeAreaProvider></GestureHandlerRootView>;
+  return <GestureHandlerRootView style={{ flex:1 }}><SafeAreaProvider><AppProvider><StatusBar style="dark"/><Stack screenOptions={{ headerShown:false, contentStyle:{backgroundColor:colors.cream}, animation:'fade', animationDuration:220 }}><Stack.Screen name="(tabs)"/><Stack.Screen name="recipe/[id]"/><Stack.Screen name="search"/><Stack.Screen name="brew-guide"/><Stack.Screen name="settings"/></Stack></AppProvider></SafeAreaProvider></GestureHandlerRootView>;
 }
