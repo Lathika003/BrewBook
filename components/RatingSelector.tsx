@@ -1,3 +1,0 @@
-import { Pressable, StyleSheet, View } from 'react-native'; import { Ionicons } from '@expo/vector-icons'; import { colors } from '@/constants/theme';
-export function RatingSelector({value,onChange}:{value:number;onChange:(v:number)=>void}) { return <View style={styles.row}>{[1,2,3,4,5].map(n=><Pressable key={n} hitSlop={5} onPress={()=>onChange(n)} accessibilityRole="button" accessibilityLabel={`${n} star rating`}><Ionicons name={n<=value?'star':'star-outline'} size={31} color={n<=value?colors.brown:colors.caramel}/></Pressable>)}</View>; }
-const styles=StyleSheet.create({row:{flexDirection:'row',gap:8}});
