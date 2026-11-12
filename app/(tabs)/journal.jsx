@@ -1,9 +1,10 @@
+import { useThemeStyles } from '@/context/ThemeContext';
 import { useMemo, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import recipes, { getRecipe } from '@/data/recipes';
-import { colors, fonts, radius, shadow } from '@/constants/theme';
+import { fonts, radius, shadow } from '@/constants/theme';
 import { useApp } from '@/context/AppContext';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { AppHeader } from '@/components/AppHeader';
@@ -14,6 +15,7 @@ import { RatingSelector } from '@/components/RatingSelector';
 import { PressableScale } from '@/components/PressableScale';
 const today = () => new Date().toISOString().slice(0, 10);
 export default function JournalScreen() {
+    const { colors, styles } = useThemeStyles(createStyles);
     const params = useLocalSearchParams();
     const { journal, saveEntry, deleteEntry } = useApp();
     const [editing, setEditing] = useState();
@@ -45,6 +47,7 @@ export default function JournalScreen() {
   </ScreenContainer>;
 }
 function EntryModal({ entry, initialRecipeId, onClose, onSave }) {
+    const { colors, styles, isDark } = useThemeStyles(createStyles);
     const [recipeId, setRecipeId] = useState(entry?.recipeId ?? initialRecipeId ?? recipes[0].id);
     const [rating, setRating] = useState(entry?.rating ?? 4);
     const [notes, setNotes] = useState(entry?.notes ?? '');
@@ -55,8 +58,8 @@ function EntryModal({ entry, initialRecipeId, onClose, onSave }) {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.form}>
         <Text style={styles.label}>Choose recipe</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 9 }}>{recipes.map((recipe) => <Pressable key={recipe.id} onPress={() => setRecipeId(recipe.id)} style={[styles.recipeChoice, recipeId === recipe.id && styles.recipeSelected]}><Text style={[styles.recipeChoiceText, recipeId === recipe.id && styles.recipeSelectedText]}>{recipe.name}</Text></Pressable>)}</ScrollView>
         <Text style={styles.label}>Your rating</Text><RatingSelector value={rating} onChange={setRating}/>
-        <Text style={styles.label}>Brew date</Text><TextInput value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" style={styles.input}/>
-        <Text style={styles.label}>Tasting notes</Text><TextInput value={notes} onChangeText={setNotes} placeholder="Aroma, sweetness, texture, what you would change…" placeholderTextColor={colors.muted} multiline style={[styles.input, styles.textarea]}/>
+        <Text style={styles.label}>Brew date</Text><TextInput keyboardAppearance={isDark ? "dark" : "light"} selectionColor={colors.espresso} placeholderTextColor={colors.muted} value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" style={styles.input}/>
+        <Text style={styles.label}>Tasting notes</Text><TextInput keyboardAppearance={isDark ? "dark" : "light"} selectionColor={colors.espresso} placeholderTextColor={colors.muted} value={notes} onChangeText={setNotes} placeholder="Aroma, sweetness, texture, what you would change…" multiline style={[styles.input, styles.textarea]}/>
         <CustomButton label={entry ? 'Save changes' : 'Save to journal'} icon="checkmark" onPress={() => { if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         Alert.alert('Check the date', 'Use the format YYYY-MM-DD.');
         return;
@@ -65,13 +68,13 @@ function EntryModal({ entry, initialRecipeId, onClose, onSave }) {
     </KeyboardAvoidingView>
   </Modal>;
 }
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
     intro: { fontFamily: fonts.sans, fontSize: 14, lineHeight: 21, color: colors.muted, marginTop: -8, marginBottom: 22 },
-    card: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 12, backgroundColor: colors.white, borderRadius: radius.lg, marginBottom: 12, ...shadow.card },
+    card: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 12, backgroundColor: colors.surface, borderRadius: radius.lg, marginBottom: 12, ...shadow.card },
     thumb: { width: 82, height: 96, borderRadius: radius.md }, cardBody: { flex: 1 }, date: { fontFamily: fonts.sansMedium, fontSize: 10, textTransform: 'uppercase', letterSpacing: 1, color: colors.brown },
     name: { fontFamily: fonts.serif, fontWeight: '600', fontSize: 19, color: colors.charcoal, marginTop: 3 }, stars: { flexDirection: 'row', gap: 2, marginTop: 5 }, notes: { fontFamily: fonts.sans, fontSize: 12, lineHeight: 17, color: colors.muted, marginTop: 6 },
     modal: { flex: 1, backgroundColor: colors.cream }, modalTop: { paddingTop: Platform.OS === 'ios' ? 20 : 42, paddingHorizontal: 20, paddingBottom: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    modalEye: { fontFamily: fonts.sansMedium, fontWeight: '700', fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: colors.brown }, modalTitle: { fontFamily: fonts.serif, fontWeight: '600', fontSize: 30, color: colors.charcoal }, close: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' },
-    form: { padding: 20, paddingBottom: 50 }, label: { fontFamily: fonts.sansMedium, fontWeight: '700', fontSize: 12, color: colors.charcoal, marginTop: 22, marginBottom: 10 }, recipeChoice: { backgroundColor: colors.white, borderColor: colors.line, borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: 15, paddingVertical: 10 }, recipeSelected: { backgroundColor: colors.espresso, borderColor: colors.espresso }, recipeChoiceText: { fontFamily: fonts.sansMedium, fontSize: 12, color: colors.brown }, recipeSelectedText: { color: colors.white },
-    input: { minHeight: 52, borderRadius: radius.md, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 15, fontFamily: fonts.sans, fontSize: 14, color: colors.charcoal }, textarea: { height: 130, textAlignVertical: 'top', paddingTop: 14, marginBottom: 24 },
+    modalEye: { fontFamily: fonts.sansMedium, fontWeight: '700', fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: colors.brown }, modalTitle: { fontFamily: fonts.serif, fontWeight: '600', fontSize: 30, color: colors.charcoal }, close: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
+    form: { padding: 20, paddingBottom: 50 }, label: { fontFamily: fonts.sansMedium, fontWeight: '700', fontSize: 12, color: colors.charcoal, marginTop: 22, marginBottom: 10 }, recipeChoice: { backgroundColor: colors.surface, borderColor: colors.line, borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: 15, paddingVertical: 10 }, recipeSelected: { backgroundColor: colors.espresso, borderColor: colors.espresso }, recipeChoiceText: { fontFamily: fonts.sansMedium, fontSize: 12, color: colors.brown }, recipeSelectedText: { color: colors.onAccent },
+    input: { minHeight: 52, borderRadius: radius.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 15, fontFamily: fonts.sans, fontSize: 14, color: colors.charcoal }, textarea: { height: 130, textAlignVertical: 'top', paddingTop: 14, marginBottom: 24 },
 });

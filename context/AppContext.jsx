@@ -5,7 +5,7 @@ export function AppProvider({ children }) {
     const [ready, setReady] = useState(false);
     const [favorites, setFavorites] = useState([]);
     const [journal, setJournal] = useState([]);
-    const [preferences, setPreferences] = useState({ reducedMotion: false });
+    const [preferences, setPreferences] = useState({ reducedMotion: false, colorScheme: 'light' });
     useEffect(() => {
         Promise.all([storage.getFavorites(), storage.getJournal(), storage.getPreferences()])
             .then(([f, j, p]) => { setFavorites(f); setJournal(j); setPreferences(p); })
@@ -22,8 +22,11 @@ export function AppProvider({ children }) {
     }, [journal, updateJournal]);
     const deleteEntry = useCallback((id) => updateJournal(journal.filter((item) => item.id !== id)), [journal, updateJournal]);
     const clearJournal = useCallback(() => updateJournal([]), [updateJournal]);
-    const setReducedMotion = useCallback((reducedMotion) => { const next = { reducedMotion }; setPreferences(next); void storage.setPreferences(next); }, []);
-    const value = useMemo(() => ({ ready, favorites, journal, preferences, toggleFavorite, clearFavorites, saveEntry, deleteEntry, clearJournal, setReducedMotion }), [ready, favorites, journal, preferences, toggleFavorite, clearFavorites, saveEntry, deleteEntry, clearJournal, setReducedMotion]);
+    // Persist the complete preference object so one setting never resets another.
+    useEffect(() => { if (ready) void storage.setPreferences(preferences).catch(() => {}); }, [preferences, ready]);
+    const setReducedMotion = useCallback((reducedMotion) => setPreferences(current => ({ ...current, reducedMotion })), []);
+    const setColorScheme = useCallback((colorScheme) => setPreferences(current => ({ ...current, colorScheme: colorScheme === 'dark' ? 'dark' : 'light' })), []);
+    const value = useMemo(() => ({ ready, favorites, journal, preferences, toggleFavorite, clearFavorites, saveEntry, deleteEntry, clearJournal, setReducedMotion, setColorScheme }), [ready, favorites, journal, preferences, toggleFavorite, clearFavorites, saveEntry, deleteEntry, clearJournal, setReducedMotion, setColorScheme]);
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 export function useApp() {
