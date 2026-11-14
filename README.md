@@ -10,11 +10,18 @@ BrewBook includes 24 coffee recipes, guided brewing instructions, local search a
 - Search by recipe name or ingredient
 - Filters for category, difficulty, preparation time, and hot or iced drinks
 - Recipe details with ingredients, equipment, steps, and brewing tips
+- Brew timer with adjustable duration, pause, resume, reset, and completion feedback
 - Persistent favorites and coffee journal entries
 - Ratings, tasting notes, and editable journal entries
 - Espresso, French press, pour-over, cold brew, and milk-frothing guides
 - Reduced-motion preference, accessible labels, empty states, and confirmation dialogs
 - Light and dark color-scheme support
+
+## Brew timer
+
+Open a recipe and scroll to **Brew timer** above the method. The default duration is the recipe's total preparation time, including setup; adjust it in 30-second steps to time a specific brewing step. You can pause, resume, reset, or restart the countdown. Reset restores the selected duration.
+
+When the timer finishes, it displays a completion message and gives haptic feedback on supported devices. Keep the recipe open while timing. If the app is backgrounded or your phone is locked, the countdown catches up when you return; it does not send a background notification. Leaving the recipe or restarting the app cancels the timer.
 
 ## Built with
 
