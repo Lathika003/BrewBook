@@ -33,6 +33,22 @@
 - [ ] Restart and confirm journal persistence
 - [ ] Clear favorites and journal from Settings
 
+## Brew timer (device/browser)
+
+- [ ] Open a recipe and confirm the timer starts with its total prep time; cold brew shows hours
+- [ ] Adjust the duration while idle; it stays between 30 seconds and 24 hours
+- [ ] Start the timer and confirm the countdown decreases and adjustment controls are disabled
+- [ ] Pause for several seconds, resume, and confirm paused time is excluded
+- [ ] Reset while running or paused and confirm the selected duration is restored
+- [ ] Reduce a short recipe to 30 seconds, let it finish, and confirm the completion message and one haptic signal on a supported device
+- [ ] Restart after completion and confirm a fresh countdown starts
+- [ ] Background or lock the phone while running, return before expiry, and confirm elapsed time is reflected
+- [ ] Return after expiry and confirm completion feedback occurs once on return
+- [ ] Leave the recipe, open another recipe, and confirm it has a fresh timer
+- [ ] Tap Add to coffee journal while timing, return to the recipe, and confirm its timer is reset
+- [ ] Verify controls in light/dark themes, at large text sizes, and with VoiceOver/TalkBack
+- [ ] Verify the web countdown completes without errors when vibration is unsupported
+
 ## Visual, motion, and accessibility
 
 - [ ] Every missing photograph renders intentional placeholder artwork

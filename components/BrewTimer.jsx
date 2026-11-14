@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { fonts, radius } from '@/constants/theme';
 import { useThemeStyles } from '@/context/ThemeContext';
 import { CustomButton } from './CustomButton';
@@ -13,6 +15,11 @@ function formatTime(seconds) {
     return hours > 0 ? hours + ':' + clock : clock;
 }
 
+function signalCompletion() {
+    // Haptics may be unavailable, for example in a browser or iOS Low Power Mode.
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+}
+
 export function BrewTimer({ prepTime }) {
     const { styles } = useThemeStyles(createStyles);
     const [duration, setDuration] = useState(prepTime * 60);
@@ -21,20 +28,36 @@ export function BrewTimer({ prepTime }) {
     const deadline = useRef(null);
     const pausedRemaining = useRef(duration * 1000);
 
+    useFocusEffect(useCallback(() => {
+        return () => {
+            deadline.current = null;
+            pausedRemaining.current = duration * 1000;
+            setRemaining(duration);
+            setStatus('idle');
+        };
+    }, [duration]));
+
     useEffect(() => {
         if (status !== 'running') return;
         const update = () => {
-            if (deadline.current === null) return;
+            if (deadline.current === null || AppState.currentState === 'background' || AppState.currentState === 'inactive') return;
             const seconds = Math.max(0, Math.ceil((deadline.current - Date.now()) / 1000));
             setRemaining(seconds);
             if (seconds === 0) {
                 deadline.current = null;
                 setStatus('finished');
+                signalCompletion();
             }
         };
         update();
         const interval = setInterval(update, 250);
-        return () => clearInterval(interval);
+        const subscription = AppState.addEventListener('change', state => {
+            if (state === 'active') update();
+        });
+        return () => {
+            clearInterval(interval);
+            subscription.remove();
+        };
     }, [status]);
 
     function start() {
@@ -50,6 +73,7 @@ export function BrewTimer({ prepTime }) {
         pausedRemaining.current = milliseconds;
         setRemaining(Math.ceil(milliseconds / 1000));
         setStatus(milliseconds > 0 ? 'paused' : 'finished');
+        if (milliseconds === 0) signalCompletion();
     }
 
     function reset() {
@@ -73,7 +97,7 @@ export function BrewTimer({ prepTime }) {
             <Text style={styles.title}>Brew timer</Text>
             <Text style={styles.help}>Starts with the total recipe prep time. Adjust it to time a brewing step.</Text>
             <Text style={styles.clock} accessibilityLabel={remaining + ' seconds remaining'}>{formatTime(remaining)}</Text>
-            <Text style={styles.status}>
+            <Text style={styles.status} accessibilityLiveRegion="polite" role="status">
                 {status === 'finished' ? 'Time is up! Check your brew.' : status === 'paused' ? 'Timer paused' : status === 'running' ? 'Brewing in progress' : 'Ready when you are'}
             </Text>
             <View style={styles.adjustments}>
@@ -88,7 +112,7 @@ export function BrewTimer({ prepTime }) {
                 <CustomButton style={styles.control} label={status === 'running' ? 'Pause' : status === 'paused' ? 'Resume' : status === 'finished' ? 'Start again' : 'Start Brew Timer'} icon={status === 'running' ? 'pause-outline' : 'play-outline'} onPress={status === 'running' ? pause : start}/>
                 <CustomButton label="Reset" variant="secondary" onPress={reset}/>
             </View>
-            <Text style={styles.help}>Keep this recipe open while brewing. Leaving this recipe cancels the timer.</Text>
+            <Text style={styles.help}>Keep this recipe open. If you lock your phone, check the timer when you return. Leaving this recipe cancels it.</Text>
         </View>
     );
 }
