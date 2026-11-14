@@ -4,6 +4,20 @@
 
 BrewBook includes 24 coffee recipes, guided brewing instructions, local search and filters, favorites, and a tasting journal. Recipe content ships with the app, while personal data is stored locally on the device.
 
+## Screenshots
+
+| Home | Coffee discovery | Recipe details |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/home.png" alt="BrewBook home with the featured French Press recipe and coffee categories" width="240"> | <img src="docs/screenshots/coffee-discovery.png" alt="Popular coffee recipes and shortcuts to Favorites and the Brew Guide" width="240"> | <img src="docs/screenshots/recipe-details.png" alt="Flat White recipe with preparation time, ingredients, and brew timer" width="240"> |
+
+| Brew timer | Explore | Favorites |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/brew-timer.png" alt="Adjustable brew countdown with Start and Reset controls above the brewing method" width="240"> | <img src="docs/screenshots/explore.png" alt="Explore coffee recipe cards including Cappuccino and Caffe Latte" width="240"> | <img src="docs/screenshots/favorites.png" alt="Saved Cappuccino and Affogato recipes in Favorites" width="240"> |
+
+| Coffee journal | Settings · Light | Settings · Dark |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/journal.png" alt="Coffee journal with a rated Macchiato entry and tasting note" width="240"> | <img src="docs/screenshots/settings-light.png" alt="Light theme settings with appearance, reduced motion, and local data controls" width="240"> | <img src="docs/screenshots/settings-dark.png" alt="Dark theme settings with appearance, reduced motion, and local data controls" width="240"> |
+
 ## Features
 
 - 24 built-in coffee recipes across six categories
